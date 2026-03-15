@@ -46,7 +46,7 @@ export default function LoginPage() {
     <AuthLayout>
       <div className="rounded-xl shadow-sm border border-gray-200 p-6" style={{ backgroundColor: '#FF441F' }}>
         <h2 className="text-lg font-semibold text-white mb-1">¿Con qué perfil ingresas hoy? 🔥</h2>
-        <p className="text-white/75 text-sm mb-6">Sin contraseña — entorno de demostración.</p>
+        <p className="text-white/75 text-sm mb-6">Selecciona tu perfil para continuar.</p>
 
         <div className="space-y-3">
 
