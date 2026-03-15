@@ -1,0 +1,4 @@
+Nombre,ID_Empleado,ID_Supervisor,Supervisor,País,Meta,Ventas,R2S_Pct,Comision_Total,Dias_Handoff,Tiendas_Total,Tiendas_Entregadas
+Sofia Reyes,EMP-001,SUP-001,Carlos Lopez,Colombia,50000,48000,96,2400,10,2,2
+James Garcia,EMP-002,SUP-001,Carlos Lopez,Colombia,45000,32000,71,0,,1,0
+Maria Torres,EMP-003,SUP-002,Ana Gomez,México,55000,60500,110,3025,7,3,3
