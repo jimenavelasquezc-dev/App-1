@@ -28,9 +28,15 @@ export default function DashboardPage() {
   const { exceptions } = useExceptions()
   const { currentUser, role } = useAuth()
   const filters = useFilters()
+  const { setSupervisorId } = filters
 
   // Load CSV whenever period changes
   useEffect(() => { loadPeriod(period) }, [period]) // eslint-disable-line
+
+  // Auto-filter to this supervisor's team when they log in
+  useEffect(() => {
+    if (currentUser?.supervisorId) setSupervisorId(currentUser.supervisorId)
+  }, [currentUser?.supervisorId]) // eslint-disable-line
 
   const isLoading = loadingPeriod === period
 

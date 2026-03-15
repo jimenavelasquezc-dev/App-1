@@ -104,6 +104,30 @@ export async function loadCsvPeriod(period) {
   }
 }
 
+// ── Supervisor email loader (used by LoginPage) ───────────────────────────────
+export async function loadSupervisorEmails(period) {
+  const filename = PERIOD_FILE[period]
+  if (!filename) return []
+  try {
+    const res = await fetch(`/data/${filename}.csv`)
+    if (!res.ok) return []
+    const text = await res.text()
+    const { data: raw } = Papa.parse(text, { skipEmptyLines: false })
+    if (!raw || raw.length < 4) return []
+    const seen = new Set()
+    const result = []
+    raw.slice(2).forEach(row => {
+      if (!isEmailRow(row) || !isHunter(row) || isExcluded(row)) return
+      const boss = String(row[COL.BOSS_EMAIL] ?? '').trim().toLowerCase()
+      if (boss && boss.includes('@') && !seen.has(boss)) {
+        seen.add(boss)
+        result.push(boss)
+      }
+    })
+    return result.sort()
+  } catch { return [] }
+}
+
 // ── Transform ─────────────────────────────────────────────────────────────────
 function transform(raw, period, filename) {
   // Row 1 = human-readable headers; data starts at row 3 (skip row 0 + row 2)

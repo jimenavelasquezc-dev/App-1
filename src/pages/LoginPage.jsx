@@ -1,21 +1,45 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AuthLayout from '../layouts/AuthLayout.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { demoUsers } from '../data/mockEmployees.js'
+import { loadSupervisorEmails } from '../utils/csvLoader.js'
 
-const reps        = demoUsers.filter(u => u.role === 'rep')
-const dataUsers   = demoUsers.filter(u => u.role === 'data_person')
-const managers    = demoUsers.filter(u => u.role === 'manager')
+const dataUsers = demoUsers.filter(u => u.role === 'data_person')
+const managers  = demoUsers.filter(u => u.role === 'manager')
+
+// "alejandra.mejia@rappi.com" → "Alejandra Mejia"
+function formatName(email) {
+  const [local] = email.split('@')
+  return local.split('.').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+}
 
 export default function LoginPage() {
-  const { login } = useAuth()
-  const navigate  = useNavigate()
-  const [supOpen, setSupOpen] = useState(false)
+  const { login }  = useAuth()
+  const navigate   = useNavigate()
+  const [supOpen, setSupOpen]   = useState(false)
+  const [supEmails, setSupEmails] = useState([])
+  const [loading, setLoading]   = useState(true)
+
+  useEffect(() => {
+    loadSupervisorEmails('2026-03').then(emails => {
+      setSupEmails(emails)
+      setLoading(false)
+    })
+  }, [])
 
   const handleLogin = (user) => {
     login(user)
     navigate(user.role === 'data_person' ? '/exceptions' : '/dashboard')
+  }
+
+  const loginAsSupervisor = (email) => {
+    handleLogin({
+      id:           email,
+      name:         formatName(email),
+      role:         'manager',
+      supervisorId: email,   // used by dashboard to auto-filter
+    })
   }
 
   return (
@@ -26,7 +50,7 @@ export default function LoginPage() {
 
         <div className="space-y-3">
 
-          {/* ── Supervisores — dropdown ── */}
+          {/* ── Supervisores — dropdown con nombres reales del CSV ── */}
           <div>
             <p className="text-xs font-bold text-white uppercase tracking-widest mb-2">Supervisor</p>
             <div className="relative">
@@ -39,25 +63,35 @@ export default function LoginPage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900 text-sm">Supervisores</p>
-                  <p className="text-xs text-gray-500">Consulta tu desempeño y envía solicitudes 🚀</p>
+                  <p className="text-xs text-gray-500">
+                    {loading ? 'Cargando...' : `${supEmails.length} supervisores · elige el tuyo 🚀`}
+                  </p>
                 </div>
-                <span className={`text-gray-400 transition-transform duration-200 ${supOpen ? 'rotate-180' : ''}`}>
+                <span className={`text-gray-400 text-sm transition-transform duration-200 ${supOpen ? 'rotate-180' : ''}`}>
                   ▾
                 </span>
               </button>
 
               {supOpen && (
-                <div className="mt-1 rounded-xl border border-white/20 bg-white shadow-lg overflow-hidden max-h-72 overflow-y-auto">
-                  {reps.map((user, i) => (
+                <div className="mt-1 rounded-xl border border-gray-100 bg-white shadow-xl overflow-hidden max-h-72 overflow-y-auto">
+                  {loading ? (
+                    <p className="text-xs text-gray-400 text-center py-4">Cargando supervisores...</p>
+                  ) : supEmails.length === 0 ? (
+                    <p className="text-xs text-gray-400 text-center py-4">No se encontraron supervisores en el CSV.</p>
+                  ) : supEmails.map((email, i) => (
                     <button
-                      key={user.id}
-                      onClick={() => handleLogin(user)}
+                      key={email}
+                      onClick={() => loginAsSupervisor(email)}
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-rappi-bg transition-colors ${i !== 0 ? 'border-t border-gray-100' : ''}`}
                     >
-                      <div className="w-7 h-7 rounded-full bg-rappi/10 flex items-center justify-center text-xs font-bold text-rappi flex-shrink-0">
-                        {user.name.charAt(0)}
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                           style={{ backgroundColor: '#FF441F' }}>
+                        {formatName(email).charAt(0)}
                       </div>
-                      <span className="text-sm text-gray-800 font-medium">{user.name}</span>
+                      <div>
+                        <p className="text-sm text-gray-800 font-semibold">{formatName(email)}</p>
+                        <p className="text-xs text-gray-400">{email}</p>
+                      </div>
                     </button>
                   ))}
                 </div>
