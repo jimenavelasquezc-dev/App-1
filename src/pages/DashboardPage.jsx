@@ -46,7 +46,10 @@ export default function DashboardPage() {
     ? Math.round(periodData.reduce((s, c) => s + c.attainmentPct, 0) / periodData.length)
     : 0
 
-  const myCommission = role === 'rep' ? getForEmployee(currentUser?.id, period) : null
+  const myCommission  = role === 'rep' ? getForEmployee(currentUser?.id, period) : null
+  const myExceptions  = role === 'rep'
+    ? exceptions.filter(e => e.submittedBy === currentUser?.id)
+    : []
 
   // Badge: CSV loaded vs mock fallback
   const usingCsv = csvCache[period] != null
@@ -97,7 +100,7 @@ export default function DashboardPage() {
       {role === 'rep' && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ProgressTracker commission={myCommission} />
+            <ProgressTracker commission={myCommission} exceptions={myExceptions} />
             <div className="space-y-6">
               <KpiStrip stats={{ ...earnedStats, avgAttainment }} openExceptions={openExceptions} compact />
               <CommissionEarnedPie stats={earnedStats} />

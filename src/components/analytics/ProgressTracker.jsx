@@ -51,7 +51,36 @@ function PayBlock({ label, amount, pct, accent }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export default function ProgressTracker({ commission }) {
+function ExceptionSummary({ exceptions }) {
+  if (!exceptions || exceptions.length === 0) return null
+  const pending  = exceptions.filter(e => ['pending', 'under_review'].includes(e.status)).length
+  const approved = exceptions.filter(e => e.status === 'approved').length
+  const rejected = exceptions.filter(e => e.status === 'rejected').length
+
+  return (
+    <div>
+      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+        Mis solicitudes de excepción
+      </p>
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-xl p-3 bg-orange-50 border border-orange-100 text-center">
+          <p className="text-2xl font-black text-orange-500">{pending}</p>
+          <p className="text-xs text-gray-500 mt-0.5">En revisión</p>
+        </div>
+        <div className="rounded-xl p-3 bg-green-50 border border-green-100 text-center">
+          <p className="text-2xl font-black text-green-600">{approved}</p>
+          <p className="text-xs text-gray-500 mt-0.5">Aprobadas</p>
+        </div>
+        <div className="rounded-xl p-3 bg-red-50 border border-red-100 text-center">
+          <p className="text-2xl font-black text-red-500">{rejected}</p>
+          <p className="text-xs text-gray-500 mt-0.5">Rechazadas</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function ProgressTracker({ commission, exceptions }) {
   if (!commission) {
     return (
       <Card>
@@ -196,6 +225,9 @@ export default function ProgressTracker({ commission }) {
           <span className="ml-auto text-xl font-black">+${bd.bonoExtra.toLocaleString()}</span>
         </div>
       )}
+
+      {/* Exception summary */}
+      <ExceptionSummary exceptions={exceptions} />
 
       {/* Total */}
       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
