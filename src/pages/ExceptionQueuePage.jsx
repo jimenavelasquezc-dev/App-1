@@ -267,6 +267,7 @@ export default function ExceptionQueuePage() {
         </Card>
       ) : (
         <Card padding={false}>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
@@ -316,6 +317,7 @@ export default function ExceptionQueuePage() {
               })}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
     </div>
