@@ -4,7 +4,7 @@ import { useExceptions } from '../../context/ExceptionsContext.jsx'
 
 const navItems = [
   { to: '/dashboard',      label: 'Dashboard',           icon: '🚀', roles: ['rep', 'manager', 'data_person'] },
-  { to: '/exceptions/new', label: 'Nueva Excepción',     icon: '💸', roles: ['rep'] },
+  { to: '/exceptions/new', label: 'Cola de Excepciones', icon: '💸', roles: ['rep'] },
   { to: '/exceptions',     label: 'Cola de Excepciones', icon: '🔥', roles: ['manager', 'data_person'] },
 ]
 
