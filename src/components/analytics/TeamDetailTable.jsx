@@ -58,19 +58,14 @@ function ReviewBadge({ status, requestDate }) {
   )
 }
 
-function QuincenaCell({ amount, quota }) {
-  // Show progress bar: amount vs expected target (20% of potential commission)
-  const target = Math.round(quota * 0.05 * 0.20)  // rough target at 100% att
-  const pct = target > 0 ? Math.min(Math.round((amount / target) * 100), 100) : 0
-  const color = amount > 0 ? '#FF441F' : '#e5e7eb'
+function QuincenaCell({ amount, total }) {
+  const pct = total > 0 ? Math.round((amount / total) * 100) : 0
   return (
     <div className="text-right">
-      <p className="text-xs font-semibold text-gray-800">${amount.toLocaleString()}</p>
-      <div className="flex justify-end mt-0.5">
-        <div className="w-14 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-          <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: color }} />
-        </div>
-      </div>
+      <p className="text-xs font-semibold text-gray-800">
+        ${amount.toLocaleString()}{' '}
+        <span className="text-gray-400 font-normal">({pct}%)</span>
+      </p>
     </div>
   )
 }
@@ -108,13 +103,8 @@ export default function TeamDetailTable({ data }) {
               <th className="text-left py-3 px-4 font-medium text-gray-600">Comercial</th>
               <th className="text-left py-3 px-4 font-medium text-gray-600">R2S %</th>
               <th className="text-left py-3 px-4 font-medium text-gray-600">Tiendas Entregadas</th>
-              <th className="text-right py-3 px-4 font-medium text-gray-600">
-                1ª Quincena <span className="text-gray-400 font-normal">(20%)</span>
-              </th>
-              <th className="text-right py-3 px-4 font-medium text-gray-600">
-                2ª Quincena <span className="text-gray-400 font-normal">(20%)</span>
-              </th>
-              <th className="text-left py-3 px-4 font-medium text-gray-600">Revisión</th>
+              <th className="text-right py-3 px-4 font-medium text-gray-600">1ª Quincena</th>
+              <th className="text-right py-3 px-4 font-medium text-gray-600">2ª Quincena</th>
               <th className="text-right py-3 px-6 font-medium text-gray-600">Comisión Total</th>
             </tr>
           </thead>
@@ -151,13 +141,10 @@ export default function TeamDetailTable({ data }) {
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    <QuincenaCell amount={row.quincenal1} quota={row.quota} />
+                    <QuincenaCell amount={row.quincenal1} total={row.commissionAmount} />
                   </td>
                   <td className="py-3 px-4">
-                    <QuincenaCell amount={row.quincenal2} quota={row.quota} />
-                  </td>
-                  <td className="py-3 px-4">
-                    <ReviewBadge status={row.reviewStatus} requestDate={row.requestDate} />
+                    <QuincenaCell amount={row.quincenal2} total={row.commissionAmount} />
                   </td>
                   <td className="py-3 px-6 text-right">
                     <p className={`font-bold text-sm ${below ? 'text-gray-400' : 'text-gray-900'}`}>
