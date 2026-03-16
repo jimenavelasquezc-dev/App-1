@@ -23,10 +23,23 @@ export default function ExceptionRequestPage() {
   const [lastId, setLastId]       = useState(null)
 
   // Only this supervisor's exceptions
-  const mine       = exceptions.filter(e => e.submittedBy === currentUser?.id)
-  const enRevision = mine.filter(e => ['pending', 'under_review'].includes(e.status)).length
-  const aprobadas  = mine.filter(e => e.status === 'approved').length
-  const rechazadas = mine.filter(e => e.status === 'rejected').length
+  const real = exceptions.filter(e => e.submittedBy === currentUser?.id)
+
+  // Demo data shown when no real exceptions exist yet
+  const DEMO_EXCEPTIONS = [
+    { id: 'EXC-2026031', storeId: 'STR-4821', type: 'store_not_counting', status: 'approved',      submittedAt: new Date(Date.now() - 15 * 86400000).toISOString() },
+    { id: 'EXC-2026032', storeId: 'STR-3047', type: 'wrong_owner',        status: 'approved',      submittedAt: new Date(Date.now() - 10 * 86400000).toISOString() },
+    { id: 'EXC-2026033', storeId: 'STR-7193', type: 'store_not_counting', status: 'under_review',  submittedAt: new Date(Date.now() -  4 * 86400000).toISOString() },
+    { id: 'EXC-2026034', storeId: 'STR-5562', type: 'other',              status: 'pending',       submittedAt: new Date(Date.now() -  1 * 86400000).toISOString() },
+  ]
+  const DEMO_STATS = { total: 12, enRevision: 3, aprobadas: 7, rechazadas: 2 }
+
+  const useDemo    = real.length === 0
+  const mine       = useDemo ? DEMO_EXCEPTIONS : real
+  const enRevision = useDemo ? DEMO_STATS.enRevision : real.filter(e => ['pending', 'under_review'].includes(e.status)).length
+  const aprobadas  = useDemo ? DEMO_STATS.aprobadas  : real.filter(e => e.status === 'approved').length
+  const rechazadas = useDemo ? DEMO_STATS.rechazadas : real.filter(e => e.status === 'rejected').length
+  const totalCount = useDemo ? DEMO_STATS.total      : real.length
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -40,11 +53,10 @@ export default function ExceptionRequestPage() {
         </p>
       </div>
 
-      {/* 4 tarjetas — solo si tiene excepciones */}
-      {mine.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* 4 tarjetas */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl border-2 border-gray-100 bg-white p-4 text-center shadow-sm">
-            <p className="text-3xl font-black text-gray-800">{mine.length}</p>
+            <p className="text-3xl font-black text-gray-800">{totalCount}</p>
             <p className="text-xs text-gray-500 mt-1">Total solicitadas</p>
           </div>
           <div className="rounded-2xl border-2 border-orange-200 bg-orange-50 p-4 text-center shadow-sm">
@@ -60,7 +72,6 @@ export default function ExceptionRequestPage() {
             <p className="text-xs text-gray-500 mt-1">Rechazadas</p>
           </div>
         </div>
-      )}
 
       {/* Formulario */}
       <div>
@@ -89,8 +100,7 @@ export default function ExceptionRequestPage() {
       </div>
 
       {/* Historial */}
-      {mine.length > 0 && (
-        <div>
+      <div>
           <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
             Mis solicitudes
           </p>
@@ -121,7 +131,6 @@ export default function ExceptionRequestPage() {
             </div>
           </Card>
         </div>
-      )}
     </div>
   )
 }
