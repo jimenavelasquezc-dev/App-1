@@ -37,8 +37,8 @@ export default function LoginPage() {
     handleLogin({
       id:           email,
       name:         formatName(email),
-      role:         'manager',
-      supervisorId: email,   // used by dashboard to auto-filter
+      role:         'rep',
+      supervisorId: email,
     })
   }
 
