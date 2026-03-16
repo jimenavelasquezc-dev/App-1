@@ -109,7 +109,7 @@ export default function DashboardPage() {
       {role === 'rep' && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ProgressTracker commission={myCommission} exceptions={myExceptions} teamHandoffPct={supTeamSummary?.avgHandoffPct} />
+            <ProgressTracker commission={myCommission} exceptions={myExceptions} teamSummary={supTeamSummary} />
             <div className="space-y-6">
               <KpiStrip stats={{ ...earnedStats, avgAttainment }} openExceptions={openExceptions} compact />
               <CommissionEarnedPie stats={earnedStats} />

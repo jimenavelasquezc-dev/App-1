@@ -80,7 +80,8 @@ function ExceptionSummary({ exceptions }) {
   )
 }
 
-export default function ProgressTracker({ commission, exceptions, teamHandoffPct }) {
+export default function ProgressTracker({ commission, exceptions, teamSummary }) {
+  const teamHandoffPct = teamSummary?.avgHandoffPct
   if (!commission) {
     return (
       <Card>
@@ -138,6 +139,46 @@ export default function ProgressTracker({ commission, exceptions, teamHandoffPct
           </p>
         )}
       </div>
+
+      {/* Quincena cards — solo cuando hay datos del equipo del CSV */}
+      {teamSummary && (
+        <div>
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            Attainment por Quincena
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl p-3 bg-blue-50 border border-blue-100">
+              <p className="text-xs text-blue-600 font-semibold">1ª Quincena (20%)</p>
+              <p className="text-xl font-black text-gray-900 mt-1">
+                {teamSummary.total > 0
+                  ? Math.round((teamSummary.repsOnTrack / teamSummary.total) * 100)
+                  : 0}%
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">del equipo desbloqueó Q1</p>
+            </div>
+            <div className="rounded-xl p-3 bg-purple-50 border border-purple-100">
+              <p className="text-xs text-purple-600 font-semibold">2ª Quincena (20%)</p>
+              <p className="text-xl font-black text-gray-900 mt-1">{teamSummary.avgR2s}%</p>
+              <p className="text-xs text-gray-400 mt-0.5">attainment promedio del equipo</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Alerta roja si hay comerciales debajo del 80% */}
+      {teamSummary && teamSummary.repsBelow80 > 0 && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-red-50 border border-red-100">
+          <span className="text-lg mt-0.5">⚠️</span>
+          <div>
+            <p className="text-sm font-bold text-red-700">
+              {teamSummary.repsBelow80} comercial{teamSummary.repsBelow80 > 1 ? 'es' : ''} debajo del 80%
+            </p>
+            <p className="text-xs text-red-500">
+              Tienen el pago variable bloqueado — revisa la tabla de detalle abajo.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Handoff */}
       <div className="space-y-2">
