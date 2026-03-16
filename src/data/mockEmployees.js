@@ -62,8 +62,8 @@ export const demoUsers = [
   },
   {
     id: 'DEMO-MGR-01',
-    name: 'Elena Kim',
-    email: 'elena.kim@rappi.com',
+    name: 'Jimena Velasquez',
+    email: 'jimena.velasquez@rappi.com',
     role: 'manager',
     supervisorId: null,
     storeId: null,
@@ -71,21 +71,12 @@ export const demoUsers = [
   },
   {
     id: 'DEMO-DATA-01',
-    name: 'James Patel',
-    email: 'james.patel@rappi.com',
+    name: 'Ricardo Urzua',
+    email: 'ricardo.urzua@rappi.com',
     role: 'data_person',
     supervisorId: null,
     storeId: null,
     region: 'All',
-  },
-  {
-    id: 'DEMO-SUP-01',
-    name: 'Valeria Mendoza',
-    email: 'valeria.mendoza@rappi.com',
-    role: 'manager',
-    supervisorId: 'SUP-001',
-    storeId: null,
-    region: 'Southwest',
   },
 ]
 
