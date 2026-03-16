@@ -56,6 +56,12 @@ export default function DashboardPage() {
     ? exceptions.filter(e => e.submittedBy === currentUser?.id)
     : []
 
+  // For supervisors (rep with supervisorId), compute their team's real handoff avg from CSV
+  const supFilters     = role === 'rep' && currentUser?.supervisorId
+    ? { supervisorId: currentUser.supervisorId, country: 'all' }
+    : null
+  const supTeamSummary = supFilters ? getTeamSummary(period, supFilters) : null
+
   const usingCsv = csvCache[period] != null
 
   return (
@@ -103,7 +109,7 @@ export default function DashboardPage() {
       {role === 'rep' && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ProgressTracker commission={myCommission} exceptions={myExceptions} />
+            <ProgressTracker commission={myCommission} exceptions={myExceptions} teamHandoffPct={supTeamSummary?.avgHandoffPct} />
             <div className="space-y-6">
               <KpiStrip stats={{ ...earnedStats, avgAttainment }} openExceptions={openExceptions} compact />
               <CommissionEarnedPie stats={earnedStats} />

@@ -80,7 +80,7 @@ function ExceptionSummary({ exceptions }) {
   )
 }
 
-export default function ProgressTracker({ commission, exceptions }) {
+export default function ProgressTracker({ commission, exceptions, teamHandoffPct }) {
   if (!commission) {
     return (
       <Card>
@@ -141,15 +141,47 @@ export default function ProgressTracker({ commission, exceptions }) {
 
       {/* Handoff */}
       <div className="space-y-2">
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Handoff</p>
-        {commission.handoffDays === null ? (
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Handoff del Equipo</p>
+
+        {teamHandoffPct != null ? (
+          // ── Real CSV data: team average from column AH ──────────────────
+          <>
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50">
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Promedio del equipo</p>
+                <p className={`text-2xl font-black mt-0.5 ${teamHandoffPct >= 80 ? 'text-gray-900' : 'text-yellow-600'}`}>
+                  {teamHandoffPct}%
+                </p>
+              </div>
+              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
+                teamHandoffPct >= 80 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+              }`}>
+                {teamHandoffPct >= 80 ? '✅ En objetivo' : '⚠️ Revisar tiempos de entrega'}
+              </span>
+            </div>
+            <ProgressBar
+              pct={teamHandoffPct}
+              max={100}
+              threshold={80}
+              color={teamHandoffPct >= 80 ? '#FF441F' : '#ef4444'}
+              label="Cumplimiento de handoff"
+              sublabel={`${teamHandoffPct}%`}
+            />
+            {teamHandoffPct < 80 && (
+              <p className="text-xs text-yellow-600 font-medium">
+                ⚠️ El equipo está por debajo del 80% — revisar tiempos de entrega.
+              </p>
+            )}
+          </>
+        ) : commission.handoffDays === null ? (
+          // ── No handoff data ─────────────────────────────────────────────
           <div className="flex items-center gap-2 py-2 px-3 bg-gray-50 rounded-lg">
             <span className="text-gray-400 text-sm">—</span>
             <span className="text-xs text-gray-400">Sin handoff — R2S no alcanzado</span>
           </div>
         ) : (
+          // ── Individual mock data (fallback) ─────────────────────────────
           <>
-            {/* Store delivery format */}
             <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50">
               <div>
                 <p className="text-xs text-gray-500 font-medium">Tiendas entregadas</p>
@@ -158,14 +190,10 @@ export default function ProgressTracker({ commission, exceptions }) {
                   <span className="text-sm font-normal text-gray-500 ml-1">tiendas</span>
                 </p>
               </div>
-              <div className="text-right">
-                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${bd.handoffOnTime ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                  {bd.handoffOnTime ? '✅ A tiempo' : '⚠️ Fuera de plazo'}
-                </span>
-                <p className="text-xs text-gray-400 mt-1">{handoffUsed} días / máx {HANDOFF_MAX_DAYS}</p>
-              </div>
+              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${bd.handoffOnTime ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                {bd.handoffOnTime ? '✅ A tiempo' : '⚠️ Fuera de plazo'}
+              </span>
             </div>
-            {/* Days bar */}
             <ProgressBar
               pct={handoffBarPct}
               max={100}
