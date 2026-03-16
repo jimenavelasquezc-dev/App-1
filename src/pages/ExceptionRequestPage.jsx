@@ -30,17 +30,19 @@ export default function ExceptionRequestPage() {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
-      {/* Header */}
+      {/* Saludo personalizado */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Cola de Excepciones 💸</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Hola, {currentUser?.name?.split(' ')[0]} 👋
+        </h1>
         <p className="text-sm text-gray-500 mt-0.5">
           Reporta discrepancias y consulta el estado de tus solicitudes.
         </p>
       </div>
 
-      {/* Mini-indicadores */}
+      {/* 4 tarjetas — solo si tiene excepciones */}
       {mine.length > 0 && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl border-2 border-gray-100 bg-white p-4 text-center shadow-sm">
             <p className="text-3xl font-black text-gray-800">{mine.length}</p>
             <p className="text-xs text-gray-500 mt-1">Total solicitadas</p>
@@ -48,6 +50,10 @@ export default function ExceptionRequestPage() {
           <div className="rounded-2xl border-2 border-orange-200 bg-orange-50 p-4 text-center shadow-sm">
             <p className="text-3xl font-black text-orange-500">{enRevision}</p>
             <p className="text-xs text-gray-500 mt-1">En revisión</p>
+          </div>
+          <div className="rounded-2xl border-2 border-green-200 bg-green-50 p-4 text-center shadow-sm">
+            <p className="text-3xl font-black text-green-600">{aprobadas}</p>
+            <p className="text-xs text-gray-500 mt-1">Aprobadas</p>
           </div>
           <div className="rounded-2xl border-2 border-red-200 bg-red-50 p-4 text-center shadow-sm">
             <p className="text-3xl font-black text-red-500">{rechazadas}</p>
